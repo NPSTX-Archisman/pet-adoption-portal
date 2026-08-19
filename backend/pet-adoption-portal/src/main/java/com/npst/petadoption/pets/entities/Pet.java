@@ -1,9 +1,11 @@
 package com.npst.petadoption.pets.entities;
 
+import com.npst.petadoption.adoptions.entities.AdoptionRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name="pets")
@@ -70,5 +72,8 @@ public class Pet {
     @Column(name = "is_neutered")
     @Builder.Default
     private Boolean neutered = false;
+
+    @OneToMany(mappedBy = "pet")
+    private List<AdoptionRequest> requests;
 
 }

@@ -1,8 +1,11 @@
 package com.npst.petadoption.users.entities;
 
 
+import com.npst.petadoption.adoptions.entities.AdoptionRequest;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -30,5 +33,6 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
-
+    @OneToMany(mappedBy = "applicant")
+    private List<AdoptionRequest> requests;
 }
