@@ -6,11 +6,9 @@ import com.npst.petadoption.pets.entities.PetStatus;
 
 public record SearchPetRequest(
         String name,
-        String color,
-        String breed,
         PetSpecies species,
         PetStatus status,
         PetGender gender,
-        Boolean isVaccinated,
-        Boolean isNeutered
+        Boolean vaccinated,
+        Boolean neutered
 ){}
