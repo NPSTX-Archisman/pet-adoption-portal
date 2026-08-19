@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(
@@ -32,6 +33,7 @@ public class PetController {
             summary = "Create New Pet",
             description = "Add a new pet to the list of the portal"
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public PetResponse addPet(@RequestBody CreatePetRequest petRequest){
         return this.petService.createPet(petRequest);
@@ -75,6 +77,7 @@ public class PetController {
             summary = "Update Pet",
             description = "Update a single pet using its tag"
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{tag}")
     public PetResponse updatePet(
             @PathVariable("tag") String tag,
@@ -87,6 +90,7 @@ public class PetController {
             summary = "Delete Pet",
             description = "Remove a pet's details from the portal using its tag"
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{tag}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePet(

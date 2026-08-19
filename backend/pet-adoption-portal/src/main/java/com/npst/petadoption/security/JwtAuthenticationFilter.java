@@ -49,11 +49,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
 
-                System.out.println("Auth Header: " + authorizationHeader);
-                System.out.println("Email from token: " + email);
-                System.out.println("User loaded: " + userDetails.getUsername());
-                System.out.println("Token valid: " + this.jwtService.isTokenValid(token, userDetails));
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
