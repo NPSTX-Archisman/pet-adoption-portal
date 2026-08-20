@@ -6,7 +6,6 @@ import com.npst.petadoption.pets.dtos.CreatePetRequest;
 import com.npst.petadoption.pets.dtos.PetResponse;
 import com.npst.petadoption.pets.dtos.SearchPetRequest;
 import com.npst.petadoption.pets.dtos.UpdatePetRequest;
-import com.npst.petadoption.pets.entities.Pet;
 import com.npst.petadoption.pets.services.PetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,8 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(
         name = "Pet Management Endpoints",
@@ -80,7 +77,7 @@ public class PetController {
             description = "Update a single pet using its tag"
     )
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{tag}")
+    @PatchMapping("/{tag}")
     public PetResponse updatePet(
             @PathVariable("tag") String tag,
             @RequestBody UpdatePetRequest petRequest
@@ -107,7 +104,11 @@ public class PetController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{tag}/adoptions")
-    public List<AdoptionRequestResponse> getRequestsForPet(@PathVariable("tag") String tag) {
-        return this.adoptionRequestService.getRequestsForPet(tag);
+    public Page<AdoptionRequestResponse> getRequestsForPet(
+            @PathVariable("tag") String tag,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        return this.adoptionRequestService.getRequestsForPet(tag, page, pageSize);
     }
 }

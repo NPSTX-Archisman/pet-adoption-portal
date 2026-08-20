@@ -7,6 +7,7 @@ import com.npst.petadoption.adoptions.services.AdoptionRequestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,14 +48,17 @@ public class AdoptionRequestController {
     )
     @GetMapping("/my")
     @PreAuthorize("hasRole('USER')")
-    public List<AdoptionRequestResponse> getMyRequests() {
+    public Page<AdoptionRequestResponse> getMyRequests(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
 
         String email = SecurityContextHolder
                         .getContext()
                         .getAuthentication()
                         .getName();
 
-        return adoptionRequestService.getMyRequests(email);
+        return adoptionRequestService.getMyRequests(email, page, pageSize);
     }
 
     @Operation(
@@ -76,8 +80,11 @@ public class AdoptionRequestController {
     )
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public List<AdoptionRequestResponse> getAllRequests() {
-        return this.adoptionRequestService.getAllRequests();
+    public Page<AdoptionRequestResponse> getAllRequests(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        return this.adoptionRequestService.getAllRequests(page, pageSize);
     }
 
     @Operation(

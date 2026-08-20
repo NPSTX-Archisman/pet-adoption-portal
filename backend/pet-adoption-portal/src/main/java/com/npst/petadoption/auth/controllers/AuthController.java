@@ -2,12 +2,16 @@ package com.npst.petadoption.auth.controllers;
 
 import com.npst.petadoption.auth.dtos.*;
 import com.npst.petadoption.auth.services.AuthService;
+import com.npst.petadoption.users.entities.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -89,5 +93,15 @@ public class AuthController {
                         roleCookie.toString()
                 )
                 .build();
+    }
+
+    @Operation(
+            summary = "User Details",
+            description = "Provides the name and role of the user"
+    )
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping("/me")
+    public UserDetailsResponse getUserDetails() {
+        return this.authService.getUserDetails();
     }
 }

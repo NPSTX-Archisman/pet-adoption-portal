@@ -15,7 +15,9 @@ public final class AdoptionRequestMapper {
         return new AdoptionRequestResponse(
                 request.getId(),
                 request.getPet().getTag(),
+                request.getPet().getName(),
                 request.getApplicant().getEmail(),
+                request.getApplicant().getFullName(),
                 request.getStatus(),
                 request.getRequestedAt(),
                 request.getUpdatedAt()
