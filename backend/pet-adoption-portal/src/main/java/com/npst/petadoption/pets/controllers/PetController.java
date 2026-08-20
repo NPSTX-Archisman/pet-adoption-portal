@@ -1,5 +1,7 @@
 package com.npst.petadoption.pets.controllers;
 
+import com.npst.petadoption.adoptions.dtos.AdoptionRequestResponse;
+import com.npst.petadoption.adoptions.services.AdoptionRequestService;
 import com.npst.petadoption.pets.dtos.CreatePetRequest;
 import com.npst.petadoption.pets.dtos.PetResponse;
 import com.npst.petadoption.pets.dtos.SearchPetRequest;
@@ -8,11 +10,13 @@ import com.npst.petadoption.pets.entities.Pet;
 import com.npst.petadoption.pets.services.PetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(
         name = "Pet Management Endpoints",
@@ -20,14 +24,12 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 @RequestMapping("/pets")
+@RequiredArgsConstructor
 public class PetController {
 
     // controller dependent on service
     private final PetService petService;
-    @Autowired
-    public PetController(PetService petService) {
-        this.petService = petService; // injecting service
-    }
+    private final AdoptionRequestService  adoptionRequestService;
 
     @Operation(
             summary = "Create New Pet",
@@ -44,7 +46,7 @@ public class PetController {
             description = "Fetch the list of all pets in pages"
     )
     @GetMapping()
-    public Page<Pet> getAllPets(
+    public Page<PetResponse> getAllPets(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int pageSize
     ){
@@ -56,7 +58,7 @@ public class PetController {
             description = "Fetch details of a single Pet using its Tag"
     )
     @GetMapping("/{tag}")
-    public Pet getPetByTag(@PathVariable("tag") String tag){
+    public PetResponse getPetByTag(@PathVariable("tag") String tag){
         return this.petService.getPetByTag(tag);
     }
 
@@ -65,7 +67,7 @@ public class PetController {
             description = "Filter and search through the pets list by using several search fields"
     )
     @PostMapping("/search")
-    public Page<Pet> searchPets(
+    public Page<PetResponse> searchPets(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestBody SearchPetRequest petRequest
@@ -97,5 +99,15 @@ public class PetController {
             @PathVariable("tag") String tag
     ) {
         this.petService.deletePetByTag(tag);
+    }
+
+    @Operation(
+            summary = "View all requests",
+            description = "Admin can view all requests made for adoption of this pet"
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{tag}/adoptions")
+    public List<AdoptionRequestResponse> getRequestsForPet(@PathVariable("tag") String tag) {
+        return this.adoptionRequestService.getRequestsForPet(tag);
     }
 }

@@ -60,31 +60,34 @@ public class PetService {
 
     /**
      * Get a list of current Pets
+     *
      * @return List of all pets
      */
-    public Page<Pet> getAllPets(int page, int pageSize) {
+    public Page<PetResponse> getAllPets(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        return this.petRepository.findAll(pageable);
+        return this.petRepository.findAll(pageable).map(PetMapper::mapToResponse);
     }
 
     /**
      * Get a single pet by its tag
+     *
      * @param tag string tag
      * @return Pet object or null based on search result
      */
-    public Pet getPetByTag(String tag) {
-        return this.petRepository.findByTag(tag)
-                .orElseThrow(() -> new PetNotFoundException("Pet Not Found with tag:" + tag));
+    public PetResponse getPetByTag(String tag) {
+        return PetMapper.mapToResponse(this.petRepository.findByTag(tag)
+                .orElseThrow(() -> new PetNotFoundException("Pet Not Found with tag:" + tag)));
     }
 
     /**
      * Search pets by filtering according to fields
+     *
      * @param petRequest fields in a search request
-     * @param page which page to get
-     * @param pageSize each page size
+     * @param page       which page to get
+     * @param pageSize   each page size
      * @return a single page of search results
      */
-    public Page<Pet> searchPets(SearchPetRequest petRequest, int page, int pageSize) {
+    public Page<PetResponse> searchPets(SearchPetRequest petRequest, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
 
         return this.petRepository.searchPets(
@@ -94,7 +97,7 @@ public class PetService {
                 petRequest.gender(),
                 petRequest.vaccinated(),
                 petRequest.neutered(),
-                pageable);
+                pageable).map(PetMapper::mapToResponse);
     }
 
     /**

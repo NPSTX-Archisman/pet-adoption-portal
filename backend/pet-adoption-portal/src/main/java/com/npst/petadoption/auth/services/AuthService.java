@@ -1,12 +1,10 @@
 package com.npst.petadoption.auth.services;
 
-import com.npst.petadoption.auth.dtos.LoginRequest;
-import com.npst.petadoption.auth.dtos.LoginResponse;
-import com.npst.petadoption.auth.dtos.RegisterResponse;
+import com.npst.petadoption.auth.dtos.*;
 import com.npst.petadoption.common.exceptions.ConflictException;
+import com.npst.petadoption.common.exceptions.UserNotFoundException;
 import com.npst.petadoption.security.CustomUserDetailsService;
 import com.npst.petadoption.security.JwtService;
-import com.npst.petadoption.auth.dtos.RegisterRequest;
 import com.npst.petadoption.users.entities.User;
 import com.npst.petadoption.users.entities.UserRole;
 import com.npst.petadoption.users.repositories.UserRepository;
@@ -46,7 +44,7 @@ public class AuthService {
         return new RegisterResponse(user.getEmail() + " is now registered in our system!");
     }
 
-    public LoginResponse login(LoginRequest request) {
+    public LoginResult login(LoginRequest request) {
 
         this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -55,10 +53,11 @@ public class AuthService {
                 )
         );
 
+        User user = this.userRepository.findByEmail(request.email()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(request.email());
 
         String token = this.jwtService.generateToken(userDetails);
-
-        return new LoginResponse(token);
+        return new LoginResult(token, user.getRole().name());
     }
 }

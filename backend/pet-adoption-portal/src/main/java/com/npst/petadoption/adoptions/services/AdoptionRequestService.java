@@ -2,12 +2,14 @@ package com.npst.petadoption.adoptions.services;
 
 import com.npst.petadoption.adoptions.dtos.AdoptionRequestResponse;
 import com.npst.petadoption.adoptions.dtos.CreateAdoptionRequest;
+import com.npst.petadoption.adoptions.dtos.UpdateAdoptionStatusRequest;
 import com.npst.petadoption.adoptions.entities.AdoptionRequest;
 import com.npst.petadoption.adoptions.entities.AdoptionRequestStatus;
 import com.npst.petadoption.adoptions.mappers.AdoptionRequestMapper;
 import com.npst.petadoption.adoptions.repositories.AdoptionRequestRepository;
 import com.npst.petadoption.common.exceptions.ConflictException;
 import com.npst.petadoption.common.exceptions.PetNotFoundException;
+import com.npst.petadoption.common.exceptions.ResourceNotFoundException;
 import com.npst.petadoption.common.exceptions.UserNotFoundException;
 import com.npst.petadoption.pets.entities.Pet;
 import com.npst.petadoption.pets.entities.PetStatus;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -41,6 +44,8 @@ public class AdoptionRequestService {
                 .pet(pet)
                 .applicant(user)
                 .status(AdoptionRequestStatus.PENDING)
+                .requestedAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         AdoptionRequest saved = this.repository.save(adoptionRequest);
@@ -58,5 +63,91 @@ public class AdoptionRequestService {
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return this.repository.findByApplicant(user).stream().map(AdoptionRequestMapper::toResponse).toList();
+    }
+
+    public List<AdoptionRequestResponse> getRequestsForPet(String tag) {
+        Pet pet = this.petRepository.findByTag(tag).orElseThrow(() -> new PetNotFoundException("Pet not found with tag: " + tag));
+
+        return this.repository.findByPet(pet).stream().map(AdoptionRequestMapper::toResponse).toList();
+    }
+
+    public AdoptionRequestResponse updateStatus(Long id, UpdateAdoptionStatusRequest request) {
+        AdoptionRequest adoptionRequest = this.repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Adoption request not found with id: " + id));
+        AdoptionRequestStatus currentStatus = adoptionRequest.getStatus();
+        AdoptionRequestStatus targetStatus = request.status();
+
+        validateTransition(currentStatus, targetStatus);
+
+        if (targetStatus.equals(AdoptionRequestStatus.APPROVED)) {
+            Pet pet = adoptionRequest.getPet(); // find the pet
+
+            // throw exception if already adopted
+            if (pet.getStatus() == PetStatus.ADOPTED) {
+                throw new ConflictException("Pet is already adopted");
+            }
+
+            // else complete the process
+            adoptionRequest.setStatus(AdoptionRequestStatus.APPROVED);
+            pet.setStatus(PetStatus.ADOPTED);
+
+            this.petRepository.save(pet); // save the updated status
+            rejectRemainingRequests(pet, adoptionRequest.getId());
+        } else {
+            adoptionRequest.setStatus(targetStatus);
+        }
+
+        adoptionRequest.setUpdatedAt(LocalDateTime.now());
+
+        return AdoptionRequestMapper.toResponse(this.repository.save(adoptionRequest));
+    }
+
+    private void validateTransition(AdoptionRequestStatus current, AdoptionRequestStatus target) {
+        switch (current) {
+            case PENDING ->  {
+                if (target != AdoptionRequestStatus.CHECKIN && target != AdoptionRequestStatus.REJECTED) {
+                    throw new ConflictException("You have to perform the Home Check first");
+                }
+            }
+
+            case CHECKIN ->  {
+                if (target != AdoptionRequestStatus.PAYMENT_PENDING && target != AdoptionRequestStatus.REJECTED) {
+                    throw new ConflictException("You have to make the payment first");
+                }
+            }
+
+            case PAYMENT_PENDING -> {
+                if (target != AdoptionRequestStatus.APPROVED && target != AdoptionRequestStatus.REJECTED) {
+                    throw new ConflictException("You can only approve or reject the request.");
+                }
+            }
+
+            case APPROVED,REJECTED -> {
+                throw new ConflictException("You cannot change the final status!");
+            }
+        }
+    }
+
+    private void rejectRemainingRequests(Pet pet, Long id) {
+        List<AdoptionRequest> rejectedRequests = this.repository.findByPet(pet);
+
+        rejectedRequests.forEach(rejectedRequest -> {
+            if (
+                    !rejectedRequest.getId().equals(id) && rejectedRequest.getStatus() != AdoptionRequestStatus.APPROVED
+                    && rejectedRequest.getStatus() != AdoptionRequestStatus.REJECTED
+            ) {
+                rejectedRequest.setStatus(AdoptionRequestStatus.REJECTED);
+            }
+        });
+
+        this.repository.saveAll(rejectedRequests);
+    }
+
+    public List<AdoptionRequestResponse> getAllRequests() {
+        return this.repository.findAll().stream().map(AdoptionRequestMapper::toResponse).toList();
+    }
+
+    public void deleteRequestById(Long id) {
+        AdoptionRequest adoptionRequest = this.repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Request not found with id: " + id));
+        this.repository.deleteById(adoptionRequest.getId());
     }
 }

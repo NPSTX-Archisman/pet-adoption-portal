@@ -37,6 +37,11 @@ public class SecurityConfig {
                                 "/pets/**"
                         )
                         .permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/pets/search"
+                        )
+                        .permitAll()
                         .anyRequest()
                         .authenticated()
                 )
