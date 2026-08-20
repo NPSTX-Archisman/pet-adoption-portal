@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -59,5 +60,12 @@ public class AuthService {
 
         String token = this.jwtService.generateToken(userDetails);
         return new LoginResult(token, user.getRole().name());
+    }
+
+    public UserDetailsResponse getUserDetails() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = this.userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        return new UserDetailsResponse(user.getFullName(), user.getEmail());
     }
 }

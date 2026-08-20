@@ -7,7 +7,9 @@ import java.time.LocalDateTime;
 public record AdoptionRequestResponse(
         Long id,
         String petTag,
+        String petName,
         String applicantEmail,
+        String applicantName,
         AdoptionRequestStatus status,
         LocalDateTime requestedAt,
         LocalDateTime updatedAt

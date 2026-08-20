@@ -1,5 +1,7 @@
 package com.npst.petadoption.pets.services;
 
+import com.npst.petadoption.adoptions.repositories.AdoptionRequestRepository;
+import com.npst.petadoption.common.exceptions.ConflictException;
 import com.npst.petadoption.common.exceptions.PetNotFoundException;
 import com.npst.petadoption.pets.dtos.CreatePetRequest;
 import com.npst.petadoption.pets.dtos.PetResponse;
@@ -9,6 +11,7 @@ import com.npst.petadoption.pets.entities.Pet;
 import com.npst.petadoption.pets.entities.PetStatus;
 import com.npst.petadoption.pets.mappers.PetMapper;
 import com.npst.petadoption.pets.repositories.PetRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,17 +19,13 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@RequiredArgsConstructor
 public class PetService {
 
     // service dependent on repository
     private final PetRepository petRepository;
     private final PetTagGenerator petTagGenerator;
-
-    public PetService(PetRepository petRepository, PetTagGenerator petTagGenerator) {
-        // injecting repository
-        this.petRepository = petRepository;
-        this.petTagGenerator = petTagGenerator;
-    }
+    private final AdoptionRequestRepository adoptionRequestRepository;
 
     /**
      * Creating a new pet in the portal
@@ -160,6 +159,12 @@ public class PetService {
      */
     public void deletePetByTag(String tag) {
         Pet pet = this.petRepository.findByTag(tag).orElseThrow(() ->  new PetNotFoundException("Pet Not Found with tag:" + tag));
+
+        if(adoptionRequestRepository.existsByPet(pet)) {
+            throw new ConflictException(
+                    "Cannot delete pet because adoption requests exist."
+            );
+        }
 
         this.petRepository.deleteById(pet.getId());
     }

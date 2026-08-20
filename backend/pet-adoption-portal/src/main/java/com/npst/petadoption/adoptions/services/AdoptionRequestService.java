@@ -17,6 +17,10 @@ import com.npst.petadoption.pets.repositories.PetRepository;
 import com.npst.petadoption.users.entities.User;
 import com.npst.petadoption.users.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -58,17 +62,21 @@ public class AdoptionRequestService {
         return AdoptionRequestMapper.toResponse(saved);
     }
 
-    public List<AdoptionRequestResponse> getMyRequests(String email) {
+    public Page<AdoptionRequestResponse> getMyRequests(String email, int page, int pageSize) {
 
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        return this.repository.findByApplicant(user).stream().map(AdoptionRequestMapper::toResponse).toList();
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        return this.repository.findByApplicant(user, pageable).map(AdoptionRequestMapper::toResponse);
     }
 
-    public List<AdoptionRequestResponse> getRequestsForPet(String tag) {
+    public Page<AdoptionRequestResponse> getRequestsForPet(String tag, int page, int pageSize) {
         Pet pet = this.petRepository.findByTag(tag).orElseThrow(() -> new PetNotFoundException("Pet not found with tag: " + tag));
 
-        return this.repository.findByPet(pet).stream().map(AdoptionRequestMapper::toResponse).toList();
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        return this.repository.findByPet(pet, pageable).map(AdoptionRequestMapper::toResponse);
     }
 
     public AdoptionRequestResponse updateStatus(Long id, UpdateAdoptionStatusRequest request) {
@@ -142,12 +150,22 @@ public class AdoptionRequestService {
         this.repository.saveAll(rejectedRequests);
     }
 
-    public List<AdoptionRequestResponse> getAllRequests() {
-        return this.repository.findAll().stream().map(AdoptionRequestMapper::toResponse).toList();
+    public Page<AdoptionRequestResponse> getAllRequests(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return this.repository.findAll(pageable).map(AdoptionRequestMapper::toResponse);
     }
 
-    public void deleteRequestById(Long id) {
-        AdoptionRequest adoptionRequest = this.repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Request not found with id: " + id));
-        this.repository.deleteById(adoptionRequest.getId());
+    public void deleteRequestById(Long requestId) {
+
+        AdoptionRequest request =
+                this.repository.findById(requestId).orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+
+        Pet pet = request.getPet();
+        this.repository.delete(request);
+        List<AdoptionRequest> remainingRequests = this.repository.findByPet(pet);
+        if (remainingRequests.isEmpty() && pet.getStatus() == PetStatus.PENDING_ADOPTION) {
+            pet.setStatus(PetStatus.AVAILABLE);
+            petRepository.save(pet);
+        }
     }
 }
