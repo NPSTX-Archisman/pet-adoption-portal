@@ -1,0 +1,745 @@
+{
+	"info": {
+		"_postman_id": "b734a22a-5e8a-450b-be78-45ec54cde753",
+		"name": "Pet_Adoption_Portal",
+		"description": "This collection will test everything related to backend of the Pet Adoption Portal",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "57471500",
+		"_collection_link": "https://archisman-chakraborty-5908398.postman.co/workspace/Archisman-Chakraborty's-Workspa~c943b86a-1536-42ed-894a-55f37b1e2605/collection/57471500-b734a22a-5e8a-450b-be78-45ec54cde753?action=share&source=collection_link&creator=57471500"
+	},
+	"item": [
+		{
+			"name": "Pets",
+			"item": [
+				{
+					"name": "Get All Pets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `",
+									"<style type=\"text/css\">",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+									"    .tftable tr {background-color:#ffffff;}",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+									"    .tftable tr:hover {background-color:#e0ffff;}",
+									"</style>",
+									"",
+									"<table class=\"tftable\" border=\"1\">",
+									"    <tr>",
+									"        <th>ID</th>",
+									"        <th>Name</th>",
+									"        <th>Species</th>",
+									"        <th>Age</th>",
+									"        <th>Breed</th>",
+									"        <th>Gender</th>",
+									"        <th>Status</th>",
+									"        <th>Weight</th>",
+									"        <th>Color</th>",
+									"        <th>Description</th>",
+									"        <th>Image URL</th>",
+									"        <th>Vaccinated</th>",
+									"        <th>Neutered</th>",
+									"    </tr>",
+									"    ",
+									"    {{#each response.content}}",
+									"        <tr>",
+									"            <td>{{id}}</td>",
+									"            <td>{{name}}</td>",
+									"            <td>{{species}}</td>",
+									"            <td>{{age}}</td>",
+									"            <td>{{breed}}</td>",
+									"            <td>{{gender}}</td>",
+									"            <td>{{status}}</td>",
+									"            <td>{{weight}}</td>",
+									"            <td>{{color}}</td>",
+									"            <td>{{description}}</td>",
+									"            <td>{{imageUrl}}</td>",
+									"            <td>{{vaccinated}}</td>",
+									"            <td>{{neutered}}</td>",
+									"        </tr>",
+									"    {{/each}}",
+									"</table>",
+									"`;",
+									"",
+									"function constructVisualizerPayload() {",
+									"    return {response: pm.response.json()};",
+									"}",
+									"",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/pets",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add New Pet",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbi5vbmVAcGV0c3RvcmUuY29tIiwiaWF0IjoxNzg3MTQyNzE3LCJleHAiOjE3ODcxNDYzMTd9.FEgej2XElAE7_TjEMPLfwweSv9wwsjrKWQSkD7tk-LU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Basilisk\",\n    \"species\": \"REPTILE\",\n    \"age\": 1000,\n    \"intakeDate\": \"2026-08-18\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/pets/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pets",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search a Pet By Tag",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/pets/{{pet_tag}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pets",
+								"{{pet_tag}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Pets by Fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `",
+									"<style type=\"text/css\">",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+									"    .tftable tr {background-color:#ffffff;}",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+									"    .tftable tr:hover {background-color:#e0ffff;}",
+									"</style>",
+									"",
+									"<table class=\"tftable\" border=\"1\">",
+									"    <tr>",
+									"        <th>ID</th>",
+									"        <th>Name</th>",
+									"        <th>Species</th>",
+									"        <th>Age</th>",
+									"        <th>Status</th>",
+									"    </tr>",
+									"    ",
+									"    {{#each response.content}}",
+									"        <tr>",
+									"            <td>{{id}}</td>",
+									"            <td>{{name}}</td>",
+									"            <td>{{species}}</td>",
+									"            <td>{{age}}</td>",
+									"            <td>{{status}}</td>",
+									"        </tr>",
+									"    {{/each}}",
+									"</table>",
+									"`;",
+									"",
+									"function constructVisualizerPayload() {",
+									"    return {response: pm.response.json()};",
+									"}",
+									"",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"ADOPTED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/pets/search",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pets",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a Pet",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"breed\": \"Roadacian\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/pets/{{pet_tag}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pets",
+								"{{pet_tag}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a Pet from Portal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbi5vbmVAcGV0c3RvcmUuY29tIiwiaWF0IjoxNzg3MTQyNzE3LCJleHAiOjE3ODcxNDYzMTd9.FEgej2XElAE7_TjEMPLfwweSv9wwsjrKWQSkD7tk-LU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/pets/{{pet_tag}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pets",
+								"{{pet_tag}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find All Adoption Requests",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbi5vbmVAcGV0c3RvcmUuY29tIiwiaWF0IjoxNzg3MTk5NDczLCJleHAiOjE3ODcyMDMwNzN9.EBj32y0BP9c5nEJRDEtvgtQd5dFdJ62fdKCz7ET_wOQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/pets/{{pet_tag}}/requests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pets",
+								"{{pet_tag}}",
+								"requests"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "New User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"Bhanu Banerjee\",\n    \"email\": \"bhanu.pelo.lottery@gmail.com\",\n    \"passwordHash\": \"AshiteAshiona\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin.one@petstore.com\",\n    \"passwordHash\": \"Admin@1#Password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "AdminLogin",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"admin.one@petstore.com\",\n    \"passwordHash\": \"Admin@1#Password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "165"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 20 Aug 2026 04:17:53 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbi5vbmVAcGV0c3RvcmUuY29tIiwiaWF0IjoxNzg3MTk5NDczLCJleHAiOjE3ODcyMDMwNzN9.EBj32y0BP9c5nEJRDEtvgtQd5dFdJ62fdKCz7ET_wOQ\"\n}"
+						},
+						{
+							"name": "UserLogin",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"carrey.jim@gmail.com\",\n    \"passwordHash\": \"CarreyPassword\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "163"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 20 Aug 2026 04:21:56 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjYXJyZXkuamltQGdtYWlsLmNvbSIsImlhdCI6MTc4NzE5OTcxNiwiZXhwIjoxNzg3MjAzMzE2fQ.a9Vrc3HzwpxWfNc9vmNxICas9Zo2eEQLU7adt2uSd2E\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Adoption Requests",
+			"item": [
+				{
+					"name": "Apply",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjYXJyZXkuamltQGdtYWlsLmNvbSIsImlhdCI6MTc4NzE5OTcxNiwiZXhwIjoxNzg3MjAzMzE2fQ.a9Vrc3HzwpxWfNc9vmNxICas9Zo2eEQLU7adt2uSd2E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"petTag\": \"REP-2026-00152\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/adoptions/request",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"adoptions",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbi5vbmVAcGV0c3RvcmUuY29tIiwiaWF0IjoxNzg3MTk5NDczLCJleHAiOjE3ODcyMDMwNzN9.EBj32y0BP9c5nEJRDEtvgtQd5dFdJ62fdKCz7ET_wOQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"APPROVED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/adoptions/2/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"adoptions",
+								"2",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Requests",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbi5vbmVAcGV0c3RvcmUuY29tIiwiaWF0IjoxNzg3MTk5NDczLCJleHAiOjE3ODcyMDMwNzN9.EBj32y0BP9c5nEJRDEtvgtQd5dFdJ62fdKCz7ET_wOQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"petTag\": \"REP-2026-00152\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/adoptions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"adoptions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Specific Requests",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjYXJyZXkuamltQGdtYWlsLmNvbSIsImlhdCI6MTc4NzE5OTcxNiwiZXhwIjoxNzg3MjAzMzE2fQ.a9Vrc3HzwpxWfNc9vmNxICas9Zo2eEQLU7adt2uSd2E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"petTag\": \"REP-2026-00152\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/adoptions/my",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"adoptions",
+								"my"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbi5vbmVAcGV0c3RvcmUuY29tIiwiaWF0IjoxNzg3MTk5NDczLCJleHAiOjE3ODcyMDMwNzN9.EBj32y0BP9c5nEJRDEtvgtQd5dFdJ62fdKCz7ET_wOQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"petTag\": \"REP-2026-00152\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/adoptions/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"adoptions",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Base",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}",
+					"host": [
+						"{{base_url}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
