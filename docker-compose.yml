@@ -2,7 +2,7 @@ services:
 
   postgres:
     image: postgres:17
-    container_name: postgres
+    container_name: pet-adoption-postgres
 
     environment:
       POSTGRES_USER: admin
@@ -15,10 +15,18 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d petstoreportal"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   pgadmin:
     image: dpage/pgadmin4
+    container_name: pet-adoption-pgadmin
 
-    container_name: pgadmin
+    depends_on:
+      - postgres
 
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@petstore.com
@@ -27,34 +35,34 @@ services:
     ports:
       - "4321:80"
 
-  redis:
-    image: redis:7
-
-    container_name: redis
-
-    ports:
-      - "6379:6379"
 
   backend:
     build:
       context: ./backend/pet-adoption-portal
+      dockerfile: Dockerfile
 
     container_name: pet-adoption-backend
 
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/petstoreportal
       DB_USERNAME: admin
       DB_PASSWORD: password
 
+      SPRING_PROFILES_ACTIVE: docker
+
     ports:
       - "8080:8080"
 
+    restart: unless-stopped
+
   frontend:
     build:
-      context: ./frontend
+      context: ./frontend/pet-adoption-portal
+      dockerfile: Dockerfile
 
     container_name: pet-adoption-frontend
 
@@ -63,6 +71,8 @@ services:
 
     ports:
       - "5173:80"
+
+    restart: unless-stopped
 
 volumes:
   postgres_data:
