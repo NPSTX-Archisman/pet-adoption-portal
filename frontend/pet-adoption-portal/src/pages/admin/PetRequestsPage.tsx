@@ -15,12 +15,15 @@ export default function PetRequestsPage() {
   const { tag } = useParams();
 
   const [requests, setRequests] = useState<AdoptionRequest[]>([]);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
 
     loadData();
 
-  }, []);
+  }, [page, pageSize]);
 
   const handleDeleteRequest =
   async (
@@ -64,13 +67,22 @@ export default function PetRequestsPage() {
 
       console.log(tag);
 
-      const response =
-        await getRequests(tag);
+      const response = await getRequests(tag);
 
       setRequests(
-        response.data
+        response.data.content
       );
+      setTotalPages(response.data.totalPages);
+
+      if (page >= response.data.totalPages) {
+        setPage(0);
+      }
     };
+
+  const handlePageSizeChange = (size: number) => {
+    setPage(0);
+    setPageSize(size);
+  };
 
   return (
 
@@ -175,6 +187,80 @@ export default function PetRequestsPage() {
 
           )
         )}
+
+      </div>
+
+      <div
+        className="
+          flex
+          justify-center
+          items-center
+          gap-4
+          mt-8
+        "
+      >
+
+        <button
+          disabled={page === 0}
+          onClick={() =>
+            setPage(
+              current =>
+                current - 1
+            )
+          }
+          className="
+            bg-slate-700
+            text-white
+            px-4
+            py-2
+            rounded-lg
+            disabled:opacity-50
+          "
+        >
+          Previous
+        </button>
+
+        <span>
+          Page {page + 1}
+          {" / "}
+          {totalPages}
+        </span>
+        <input
+          type="number"
+          min={1}
+          max={100}
+          value={pageSize}
+          onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+          className="
+            w-20
+            border
+            rounded-lg
+            px-3
+            py-2
+          "
+        />
+
+        <button
+          disabled={
+            page >= totalPages - 1
+          }
+          onClick={() =>
+            setPage(
+              current =>
+                current + 1
+            )
+          }
+          className="
+            bg-slate-700
+            text-white
+            px-4
+            py-2
+            rounded-lg
+            disabled:opacity-50
+          "
+        >
+          Next
+        </button>
 
       </div>
 

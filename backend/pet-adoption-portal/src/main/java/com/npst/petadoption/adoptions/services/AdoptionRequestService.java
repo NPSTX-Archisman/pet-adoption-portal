@@ -16,6 +16,8 @@ import com.npst.petadoption.pets.entities.PetStatus;
 import com.npst.petadoption.pets.repositories.PetRepository;
 import com.npst.petadoption.users.entities.User;
 import com.npst.petadoption.users.repositories.UserRepository;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +37,7 @@ public class AdoptionRequestService {
     private final PetRepository petRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public AdoptionRequestResponse createRequest(CreateAdoptionRequest request, String email) {
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
@@ -79,6 +82,7 @@ public class AdoptionRequestService {
         return this.repository.findByPet(pet, pageable).map(AdoptionRequestMapper::toResponse);
     }
 
+    @Transactional
     public AdoptionRequestResponse updateStatus(Long id, UpdateAdoptionStatusRequest request) {
         AdoptionRequest adoptionRequest = this.repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Adoption request not found with id: " + id));
         AdoptionRequestStatus currentStatus = adoptionRequest.getStatus();
@@ -155,6 +159,7 @@ public class AdoptionRequestService {
         return this.repository.findAll(pageable).map(AdoptionRequestMapper::toResponse);
     }
 
+    @Transactional
     public void deleteRequestById(Long requestId) {
 
         AdoptionRequest request =
@@ -162,6 +167,7 @@ public class AdoptionRequestService {
 
         Pet pet = request.getPet();
         this.repository.delete(request);
+        this.repository.flush();
         List<AdoptionRequest> remainingRequests = this.repository.findByPet(pet);
         if (remainingRequests.isEmpty() && pet.getStatus() == PetStatus.PENDING_ADOPTION) {
             pet.setStatus(PetStatus.AVAILABLE);

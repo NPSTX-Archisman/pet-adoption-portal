@@ -5,9 +5,7 @@ export const petSchema = z.object({
 
   species: z.string().min(1, "Species is required"),
 
-  age: z.number().min(0,"Age cannot be negative"),
-
-  imageUrl: z.url("Enter a valid image URL"),
+  age: z.number().min(0,"Age cannot be negative")
 });
 
 export type PetFormValues =

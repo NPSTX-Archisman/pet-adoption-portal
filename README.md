@@ -296,8 +296,14 @@ git clone <repository-url>
 Run the entire application:
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
+
+Use the -d for detached mode only.
+
+After the docker build completes, the application is accessible from [Localhost port 5173](http://localhost:5173).
+The backend starts up at [Localhost port 8080 with base path /api](http://localhost:8080/api).
+The pgAdmin requires additional setup and is accesible at [Localhost port 4321](http://localhost:4321). It can be used to add the server and connect to the database in a GUI for easier access.
 
 ---
 

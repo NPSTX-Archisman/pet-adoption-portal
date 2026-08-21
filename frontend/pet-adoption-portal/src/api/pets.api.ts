@@ -21,9 +21,11 @@ export const getPetByTag = (
   api.get(`/pets/${tag}`);
 
 export const getRequests = (
-  tag: string
+  tag: string,
+  page: number = 0,
+  pageSize: number = 5
 ) =>
-  api.get(`/pets/${tag}/adoptions`);
+  api.get(`/pets/${tag}/adoptions?page=${page}&pageSize=${pageSize}`);
 
 
 export const updatePetByTag = (tag: string, payload: unknown) => (

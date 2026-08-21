@@ -63,7 +63,7 @@ export function AuthProvider({
 
   useEffect(() => {
     refreshUser();
-  })
+  }, [])  
 
   return (
     <AuthContext.Provider

@@ -11,6 +11,8 @@ import com.npst.petadoption.pets.entities.Pet;
 import com.npst.petadoption.pets.entities.PetStatus;
 import com.npst.petadoption.pets.mappers.PetMapper;
 import com.npst.petadoption.pets.repositories.PetRepository;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +34,7 @@ public class PetService {
      * @param petRequest fields to create the Pet
      * @return details of stored pet
      */
+    @Transactional
     public PetResponse createPet(CreatePetRequest petRequest) {
         // tag generation logic
         String tag = this.petTagGenerator.generateTag(petRequest.species(), petRequest.intakeDate(), 0); // generating the tag
