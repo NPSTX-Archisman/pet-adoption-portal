@@ -1,7 +1,7 @@
 services:
 
   postgres:
-    image: postgres:17
+    image: postgres:16
     container_name: pet-adoption-postgres
 
     environment:

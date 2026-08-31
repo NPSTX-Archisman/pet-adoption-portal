@@ -1,0 +1,175 @@
+INSERT INTO pets (
+    tag,
+    name,
+    species,
+    age,
+    intake_date,
+    breed,
+    gender,
+    status,
+    weight,
+    description,
+    image_url,
+    is_vaccinated,
+    is_neutered
+)
+VALUES
+    (
+        'BRD-2026-00001',
+        'Fawkes',
+        'BIRD',
+        10,
+        '2026-08-21',
+        'Phoenix',
+        'UNKNOWN',
+        'AVAILABLE',
+        1000,
+        'Loyal, can carry immense loads, bursts into flames and gets reborn again',
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/The_Making_of_Harry_Potter_29-05-2012_%28Fawkes%29.jpg/960px-The_Making_of_Harry_Potter_29-05-2012_%28Fawkes%29.jpg',
+        false,
+        false
+    ),
+
+    (
+        'REP-2026-00002',
+        'Nagini',
+        'REPTILE',
+        20,
+        '2026-08-21',
+        'Meledictus',
+        'UNKNOWN',
+        'AVAILABLE',
+        100,
+        'She was a witch, now she is a snake. Very useful Horcrux',
+        'https://i.redd.it/4yfh6tw8ltyc1.jpeg',
+        false,
+        false
+    ),
+
+    (
+        'REP-2026-00003',
+        'Basilisk',
+        'REPTILE',
+        1000,
+        '2026-08-21',
+        'Basilisk',
+        'UNKNOWN',
+        'AVAILABLE',
+        1000,
+        'Monster in the Chamber of Secrets. Controlled only by the Heir of Slytherin',
+        'https://monsterlegacy.net/wp-content/uploads/2013/03/basiliskfinalresize.jpg',
+        false,
+        false
+    ),
+
+    (
+        'BRD-2026-00004',
+        'Hedwig',
+        'BIRD',
+        10,
+        '2026-08-21',
+        'White Owl',
+        'UNKNOWN',
+        'AVAILABLE',
+        5,
+        'Trustee mail carrier.',
+        'https://cdn.europosters.eu/image/750/149370.jpg',
+        false,
+        false
+    ),
+
+    (
+        'GPG-2026-00005',
+        'Scabbers',
+        'GUINEA_PIG',
+        2,
+        '2026-08-21',
+        'Animagus',
+        'UNKNOWN',
+        'AVAILABLE',
+        70,
+        'Peter Pettigrew. Missing one toe.',
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgF90vFW_rN_R1vVVzu18XI1bgkNYIuSJ2T3i6Slis3m9bMzzwcywMKIs&s=10',
+        false,
+        false
+    ),
+
+    (
+        'DOG-2026-00006',
+        'Padfoot',
+        'DOG',
+        15,
+        '2026-08-21',
+        'Animagus',
+        'UNKNOWN',
+        'AVAILABLE',
+        30,
+        'Sirius Black. Best friend of James Potter.',
+        'https://a57.foxnews.com/static.foxnews.com/foxnews.com/content/uploads/2018/09/1200/675/padfoot.jpg?ve=1&tl=1',
+        true,
+        true
+    ),
+
+    (
+        'DOG-2026-00007',
+        'Moony',
+        'DOG',
+        30,
+        '2026-08-21',
+        'Werewolf',
+        'UNKNOWN',
+        'AVAILABLE',
+        30,
+        'Remus Lupin. Got bit when he was young.',
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZnG82Zu_DmIJOgqk3ESSZrf79BDP2g20c-k3s7dO7gdDFXQPj3Ir7zdI&s=10',
+        true,
+        true
+    ),
+
+    (
+        'GPG-2026-00008',
+        'Wormtail',
+        'GUINEA_PIG',
+        15,
+        '2026-08-21',
+        'Animagus',
+        'UNKNOWN',
+        'AVAILABLE',
+        30,
+        'Same as Peter Pettigrew.',
+        'https://thumbs.dreamstime.com/b/dog-listening-big-ear-27392035.jpg',
+        false,
+        false
+    ),
+
+    (
+        'DOG-2026-00009',
+        'Fluffy',
+        'DOG',
+        1000,
+        '2026-08-21',
+        'Three-headed Dog',
+        'UNKNOWN',
+        'AVAILABLE',
+        200,
+        'Hagrids pet. Sleeps when music plays.',
+        'https://contentful.harrypotter.com/usf1vwtuqyxm/3tc7hPhyNomfJ5Ez1j398n/70624368dc7f0d19605d35a7783fdc22/fluffy-hp-f1-fact-file-hero.jpg',
+        true,
+        true
+    ),
+
+    (
+        'INS-2026-00010',
+        'Aragog',
+        'INSECT',
+        100,
+        '2026-08-21',
+        'Acromantula',
+        'UNKNOWN',
+        'AVAILABLE',
+        40,
+        'Rescued from the Forbidden Forest.',
+        'https://monsterlegacy.net/wp-content/uploads/2017/02/aragogbeauty.jpg',
+        false,
+        false
+    );
